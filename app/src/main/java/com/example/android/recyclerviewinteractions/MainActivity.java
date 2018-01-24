@@ -2,6 +2,7 @@ package com.example.android.recyclerviewinteractions;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new TodoAdapter();
         mTodoListRecyclerView.setAdapter(mAdapter);
 
+        mTodoListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         mTodoEntryEditText = (EditText)findViewById(R.id.et_todo_entry);
 
         Button addTodoButton = (Button)findViewById(R.id.btn_add_todo);
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String todoText = mTodoEntryEditText.getText().toString();
                 if (!TextUtils.isEmpty(todoText)) {
+                    mTodoListRecyclerView.scrollToPosition(0);
                     mAdapter.addTodo(todoText);
                     mTodoEntryEditText.setText("");
                 }
