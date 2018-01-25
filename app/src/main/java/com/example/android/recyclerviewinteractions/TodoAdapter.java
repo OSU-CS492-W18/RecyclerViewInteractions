@@ -19,8 +19,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoViewHolder
 
     private ArrayList<String> mTodoList;
 
-    public TodoAdapter() {
+    private OnTodoCheckedChangeListener mCheckedChangeListener;
+
+    public TodoAdapter(OnTodoCheckedChangeListener checkedChangeListener) {
         mTodoList = new ArrayList<String>();
+        mCheckedChangeListener = checkedChangeListener;
     }
 
     @Override
@@ -52,6 +55,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoViewHolder
         notifyItemInserted(0);
     }
 
+    public interface OnTodoCheckedChangeListener {
+        void onTodoCheckedChanged(String todo, boolean isChecked);
+    }
+
     class TodoViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mTodoText;
@@ -65,15 +72,27 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoViewHolder
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     String todo = mTodoList.get(adapterPositionToArrayIdx(getAdapterPosition()));
-                    String completionState = isChecked ? "COMPLETED" : "MARKED INCOMPLETE";
-                    String toastText = completionState + ": " + todo;
-                    Toast.makeText(itemView.getContext(), toastText, Toast.LENGTH_LONG).show();
+                    mCheckedChangeListener.onTodoCheckedChanged(todo, isChecked);
+                }
+            });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+
                 }
             });
         }
 
         public void bind(String todo) {
             mTodoText.setText(todo);
+        }
+
+        public void removeFromList() {
+            int position = getAdapterPosition();
+            mTodoList.remove(adapterPositionToArrayIdx(position));
+            notifyItemRemoved(position);
         }
     }
 
